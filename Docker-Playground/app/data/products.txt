@@ -1,0 +1,6 @@
+Wireless Mouse;peripherals;24.99
+Mechanical Keyboard;peripherals;89.99
+27" 4K Monitor;displays;329.99
+USB-C Hub;accessories;39.99
+Laptop Stand;accessories;29.99
+Admin Panel License;software;0.00
