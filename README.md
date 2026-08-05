@@ -14,15 +14,16 @@ Plus request-smuggling/desync and CPU/memory DoS via expensive query bodies.
 
 
 # Apache Adoption
-
+<img width="1359" height="469" alt="image" src="https://github.com/user-attachments/assets/a319fc31-d92b-4b45-8afb-00d97414ce47" />
 Feature is implemented, it will available in Tomcat 12 when its released;
-![[Pasted image 20260805112021.png]]
 
 # Nginx Adoption
+<img width="1875" height="943" alt="image" src="https://github.com/user-attachments/assets/77501313-8e46-459f-acea-b7e1e0b43e4e" />
 Feature is not implemented yet, 
-![[Pasted image 20260805112245.png]]
+
 # Cache Control
-![[Pasted image 20260805110821.png]]Even though the whole point of the new `QUERY` method (RFC 10008) is to allow complex read-only requests to be cached, Cloudflare is currently treating it as dynamic traffic for one (or both) of these reasons:
+<img width="1857" height="681" alt="image" src="https://github.com/user-attachments/assets/1b122c9e-aace-44d8-8319-1b81c2c767a1" />
+Even though the whole point of the new `QUERY` method (RFC 10008) is to allow complex read-only requests to be cached, Cloudflare is currently treating it as dynamic traffic for one (or both) of these reasons:
 
 **Default Method Behavior:** By default, CDNs like Cloudflare only cache `GET` requests. Because `QUERY` is very new, Cloudflare might still be treating it like a `POST` request (which is inherently uncacheable by default) unless you explicitly write a Cloudflare Cache Rule to override this behavior.
 **Missing `Cache-Control` Headers:** Your backend server did not send a `Cache-Control` header (e.g., `Cache-Control: public, max-age=300`) in its response. Without explicit permission from your server, Cloudflare will always default to `DYNAMIC` to be safe and avoid serving stale data.
