@@ -1,0 +1,20 @@
+services:
+  app:
+    build: ./app
+    container_name: query-poc-app
+    ports:
+      - "3000:3000"          # host-side manual testing
+    networks: [lab]
+
+  attacker:
+    build: ./attacker
+    container_name: query-poc-attacker
+    depends_on:
+      - app
+    networks: [lab]
+    stdin_open: true
+    tty: true
+    command: ["sleep", "infinity"]
+
+networks:
+  lab:
