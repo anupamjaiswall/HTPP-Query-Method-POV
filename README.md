@@ -12,6 +12,8 @@ Why it's interesting for offensive testing — the instant it ships, three atta
 3. Cache poisoning is structural — RFC 10008 makes QUERY cacheable but requires the cache key to include the body; naive caches key on URL only
 Plus request-smuggling/desync and CPU/memory DoS via expensive query bodies.
 
+# VAPT Demo for QUERY method Using Docker
+[Docker-Playground](https://github.com/anupamjaiswall/HTPP-Query-Method-POV/tree/main/Docker-Playground)
 
 # Apache Adoption
 <img width="1359" height="469" alt="image" src="https://github.com/user-attachments/assets/a319fc31-d92b-4b45-8afb-00d97414ce47" />
